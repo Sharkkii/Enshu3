@@ -7,7 +7,6 @@ from torch.autograd import Function
 import datetime
 import time
 
-
 def timestamp():
     date = datetime.datetime.now()
     year = str(date.year)
@@ -19,18 +18,15 @@ def timestamp():
     date_string = year + "-" + month + "-" + day + "-" + hour + "-" + minute + "-" + second
     return date_string
 
-
 def scale_from(x, a, b, eps=1e-4):
 # [min, max] -> [-1, 1]
     # return (2*x - a - b) / (b - a + eps) 
 # [min, max] -> [0, 1]
     return (x - a) / (b - a + eps)
 
-
 def max_scale_from(x, eps=1e-4):
     max_scale = np.max(np.abs(x))
     return scale_from(x, - max_scale, max_scale, eps), max_scale
-
 
 # [0, 1] -> [min, max]
 def scale_to(x, a, b):
@@ -39,10 +35,8 @@ def scale_to(x, a, b):
 # [0, 1] -> [min, max]
     return (b - a) * x + a 
 
-
 def max_scale_to(x, max_scale):
     return scale_to(x, - max_scale, max_scale)
-
 
 # NOTE: return max of the designated axis(always return 1-d tensor)
 def batch_max(x, max_abs=True):
@@ -53,21 +47,17 @@ def batch_max(x, max_abs=True):
         y[i] = torch.full(x.size()[1:], torch.max(x[i]))
     return y
 
-
 def batch_min(x):
     y = torch.empty(x.size())
     for i in range(x.size(0)):
         y[i] = torch.full(x.size()[1:], torch.min(x[i])) 
     return y
 
-
 def hard_sigmoid(x):
     return clip((x+1)/2, 0, 1)
 
-
 def hard_tanh(x):
     return clip(x, -1, 1)
-
 
 # NOTE:
 # This function has to do with backpropagation.
@@ -90,7 +80,6 @@ class QuantizeFunction(Function):
 def quantize(x, bit, batch):
     return QuantizeFunction.apply(x, bit, batch)
 
-
 # NOTE: clamp function
 # class ClipFunction(Function):
 #     @staticmethod
@@ -107,7 +96,6 @@ def quantize(x, bit, batch):
 #         return dx, None, None
 # def clip(x, a, b):
 #     return ClipFunction.apply(x, a, b)
-        
 
 def unique(x, batch):
     if batch:
@@ -119,7 +107,6 @@ def unique(x, batch):
         x = x.detach().numpy()
         xs = np.unique(x)
     return xs
-
 
 # NOTE: (N, C, IH, IW) -> (N*OH*OW, C*K*K)
 
@@ -137,7 +124,6 @@ def image2column(image, kernel_size, stride, padding):
     column = column.transpose((0, 4, 5, 1, 2, 3)).reshape((batch_size * output_height * output_width, -1))
 
     return column
-
 
 def column2image(column, input_shape, kernel_size, stride, padding):
     batch_size, channel, input_height, input_width = input_shape
@@ -158,13 +144,13 @@ def column2image(column, input_shape, kernel_size, stride, padding):
 
     return image
 
-
 def accuracy(y_pred, y_true):
     y_true = np.argmax(y_true, axis=1)
     y_pred = np.argmax(y_pred, axis=1)
     total_count = y_true.shape[0]
     count = sum(y_true == y_pred)
     return count / total_count
+
 # def accuracy(network, loader):
 #     total_count = 0
 #     count = 0

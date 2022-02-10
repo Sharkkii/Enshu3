@@ -4,8 +4,7 @@ import torch
 import torch.nn as nn
 from torch.autograd import Function, Variable
 from torch.distributions.uniform import Uniform
-from function import *
-
+from helper import *
 
 class MyTemplate(nn.Module):
     def __init__(self, hyperparam):
@@ -32,8 +31,6 @@ class MyTemplate(nn.Module):
         x = self.layer1(x)
         return x
 
-
-# NOTE: linear
 class QuantizedLinear(nn.Module):
     def __init__(self, input_feature, output_feature, bit_data=2, bit_grad=None, keep_w=True):
         super().__init__()
@@ -56,8 +53,6 @@ class QuantizedLinear(nn.Module):
         y = self.linear(x_quantized)
         return y
 
-
-# NOTE: conv2d
 class QuantizedConv2d(nn.Module):
     def __init__(self, input_channel, output_channel, kernel_size, stride=1, padding=0, bit_data=2, bit_grad=None, keep_w=True):
         super().__init__()
@@ -81,9 +76,6 @@ class QuantizedConv2d(nn.Module):
         y = self.conv2d(x_quantized)
         return y
 
-      
-# NOTE: relu
-    
 class QuantizedReLU(nn.Module):
     def __init__(self, bit, dynamic_range=False, lr=0.001):
         super().__init__()
@@ -104,8 +96,6 @@ class QuantizedReLU(nn.Module):
         self.y_quantized = output_y_quantized
         return output_y_quantized
 
-
-# quantizer
 class QuantizerFunction(Function):
     @staticmethod
     def forward(context, x, bit_data=None, bit_grad=None):
@@ -127,6 +117,4 @@ class Quantizer(nn.Module):
         self.bit_grad = bit_grad
     def forward(self, x):
         return QuantizerFunction.apply(x, self.bit_data, self.bit_grad)
-
-
         

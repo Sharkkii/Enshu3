@@ -1,5 +1,3 @@
-# import libraries
-
 import numpy as np
 import pandas as pd
 import time
@@ -7,26 +5,24 @@ import datetime
 
 import torch
 import torch.nn as nn
-# import torch.nn.functional as F
 import torch.optim as optim
 import torchvision
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader, Dataset, Subset
 
-from train import *
-from qnn import *
-from neural_network import *
-
+from quantized_modules import *
+from models import *
+from trainer import *
 
 def main():
+    
     # prepare datasets / dataloaders
-    # dataset_train, dataset_test = generate_datasets("mnist")
-    dataset_train, dataset_test = generate_datasets("cifar10")
+    name = "cifar10" # "mnist" or "cifar10"
+    download = False
+    dataset_train, dataset_test = generate_datasets(name, download=download)
     dataloader_train, dataloader_test = generate_dataloader(dataset_train, dataset_test, batch_train=100, batch_test=1000)
-    # dataloader_train, dataloader_test = generate_dataloader(dataset_train, dataset_test, batch_train=100, batch_test=len(dataset_test))
 
-    # define a model
-    # 11 parameters
+    # define a model (w/ 11 parameters)
     bit_weight_default = [None, None, None, None, None, None, None, None, None, None, None]
     bit_grad_default = [None, None, None, None, None, None, None, None, None, None, None]
     bit_activation_default = [None, None, None, None, None, None, None, None, None, None]
@@ -50,30 +46,30 @@ def main():
         # "bit_grad": bit_grad_default,
         # "bit_activation": bit_activation_default},
 
-        # [./Csv/first_four_are_quantized_to_2bit_2020-5-11-15-43-20.csv]
+        # [./csv/first_four_are_quantized_to_2bit_2020-5-11-15-43-20.csv]
         # first4_weight_are_quantized_to_2bit
         # {"bit_weight": [None, 2, 2, 2, 2, None, None, None, None, None, None],
         # "bit_grad": bit_grad_default,
         # "bit_activation": bit_activation_default},
 
-        # [./Csv/middle_four_are_quantized_to_2bit_2020-5-11-17-36-35.csv]
+        # [./csv/middle_four_are_quantized_to_2bit_2020-5-11-17-36-35.csv]
         # middle4_weight_are_quantized_to_2bit
         # {"bit_weight": [None, None, None, None, 2, 2, 2, 2, None, None, None],
         # "bit_grad": bit_grad_default,
         # "bit_activation": bit_activation_default},
 
-        #  [./Csv/last_three_are_quantized_to_2bit_2020-5-11-18-8-17.csv]
+        #  [./csv/last_three_are_quantized_to_2bit_2020-5-11-18-8-17.csv]
         # last2_weight_are_quantized_to_2bit
         # {"bit_weight": [None, None, None, None, None, None, None, None, 2, 2, None],
         # "bit_grad": bit_grad_default,
         # "bit_activation": bit_activation_default},
 
-        # [./Csv/first_middle_seven_are_quantized_to_2bit_2020-5-11-22-26-46.csv]
+        # [./csv/first_middle_seven_are_quantized_to_2bit_2020-5-11-22-26-46.csv]
         # {"bit_weight": [None, 2, 2, 2, 2, 2, 2, 2, None, None, None],
         # "bit_grad": bit_grad_default,
         # "bit_activation": bit_activation_default},
         
-        # [./Csv/middle_four_weight_and_activation_are_quantized_to_2bit_2020-5-12-0-23-23.csv]
+        # [./csv/middle_four_weight_and_activation_are_quantized_to_2bit_2020-5-12-0-23-23.csv]
         # middle4_weight_and_activation_are_quantized_to_2bit
         # {"bit_weight": [None, None, None, None, 2, 2, 2, 2, None, None, None],
         # "bit_grad": bit_grad_default,
@@ -144,7 +140,6 @@ def main():
         {"bit_weight": [None, None, None, None, 8, 8, 8, 8, None, None, None],
         "bit_grad": bit_grad_default,
         "bit_activation": bit_activation_default}
-
         
     ], [
         # "baseline",
@@ -167,7 +162,7 @@ def main():
         "middle4_weight_8bit_epoch20-40_with_small_lr"
 
     ], [
-       # None,
+       None,
        # None,
        # None,
        # None,
@@ -184,13 +179,8 @@ def main():
        # "first7_weight_2bit_with_small_lr_2020-5-13-10-51-27.pth"
        # "last2_weight_are_quantized_to_2bit_new_2020-5-13-22-30-48.pth",
        # "middle4_weight_and_activation_are_quantized_to_2bit_2020-5-12-22-1-49.pth"
-       "middle4_weight_are_quantized_to_8bit_2020-5-12-23-51-0.pth"
+       # "middle4_weight_are_quantized_to_8bit_2020-5-12-23-51-0.pth"
     ], limit=20)
-
 
 if __name__ == "__main__":
     main()
-    
-
-
-

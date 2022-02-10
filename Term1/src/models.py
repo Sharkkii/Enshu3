@@ -1,12 +1,8 @@
-# import libraries
-
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torchvision
-from qnn import *
-
-# VGG11 network
+from quantized_modules import *
 
 class Vgg11(torch.nn.Module):
     
@@ -72,8 +68,6 @@ class Vgg11(torch.nn.Module):
         x = x.view(x.size(0), -1)
         x = self.block5(x)
         return x
-
-# param = { "bit_weight": [], "bit_grad": [], "bit_act": [] }
 
 class QuantizedVgg11(torch.nn.Module):
     
@@ -168,10 +162,11 @@ class QuantizedVgg11(torch.nn.Module):
         x = self.block5(x)
         return x
 
-
 # FIXME:
 class Hoge(nn.Module):
+
     def __init__(self):
+
         super().__init__()
         self.layers = [
             QuantizedConv2d(1,3,3,1,1,bit=1),
@@ -194,6 +189,7 @@ class Hoge(nn.Module):
         )
         self.b = QuantizedLinear(28*28, 10, bit=1)
         # self.b = nn.Linear(28*28, 10)
+
     def forward(self, x):
         x = self.a(x)
         x = x.view(x.size(0), -1)
@@ -201,7 +197,9 @@ class Hoge(nn.Module):
         return x
 
 class Hoge(nn.Module):
+
     def __init__(self):
+
         super().__init__()
         self.layers = [
             QuantizedConv2d(1,3,3,1,1,bit_data=2, bit_grad=2),
@@ -215,36 +213,24 @@ class Hoge(nn.Module):
         ]
         self.out = QuantizedLinear(28*28, 10, bit_data=8, bit_grad=None)
         # self.out = nn.Linear(28*28, 10)
+
     def f(self):
         for layer in self.layers:
             layer.f()
         for layer in self.relus:
             layer.f()
+
     def forward(self, x):
         q = Quantizer(bit_data=None, bit_grad=1)
         x = self.layers[0](x)
-        # time.sleep(1.0)
-        # print(x[0])
         x = q(x)
         x = self.relus[0](x)
-        # time.sleep(1.0)
-        # print(x[0])
         x = self.layers[1](x)
-        # time.sleep(1.0)
-        # print(x[0])
         x = q(x)
         x = self.relus[1](x)
-        # time.sleep(1.0)
-        # print(x[0])
         x = self.layers[2](x)
-        # time.sleep(1.0)
-        # print(x[0])
         x = q(x)
         x = self.relus[2](x)
-        # time.sleep(1.0)
-        # print(x[0])
         x = x.view(x.size(0), -1)
-        # time.sleep(1.0)
-        # print(x[0])
         x = self.out(x)
         return x
