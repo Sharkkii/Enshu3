@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from environment import *
+from ..environment import *
 
 
 # convert function into the corresponding vector, and vice versa

@@ -1,6 +1,6 @@
 import numpy as np
-from environment import *
-from utility import *
+from ..environment import *
+from .utility import *
 
 # actual return
 # if no trajectory is given, this may be r.v.

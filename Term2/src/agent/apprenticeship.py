@@ -2,11 +2,10 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from environment import *
-from utility import *
-from function import *
-from reinforcement import *
-from inverse_reinforcement import *
+from ..environment import *
+from ..helper import *
+from .reinforcement import *
+from .inverse_reinforcement import *
 
 
 # naive RL-IRL
@@ -115,10 +114,10 @@ class GAIL:
 
             if self.minmax:
                 # NOTE: minimize log(1 - D(s,a))
-                self.policy_gradient.update(trajectory_sars_agent, descent=True)
+                self.policy_gradient.update(trajectory_sars_agent, descent=True, verbose=verbose)
             else:
                 # NOTE: maximize log(D(s,a))
-                self.policy_gradient.update(trajectory_sars_agent, descent=False)
+                self.policy_gradient.update(trajectory_sars_agent, descent=False, verbose=verbose)
 
 
             self.report_R.append(np.array([[r(s, a) for a in MDP.ACTION_SET] for s in MDP.STATE_SET]))

@@ -1,7 +1,6 @@
 import numpy as np
-from environment import *
-from utility import *
-from function import *
+from ..environment import *
+from ..helper import *
 
 
 # Bellman operator
@@ -140,7 +139,7 @@ class PolicyGradient:
     # def grad_entropy(self):
     
     # caution: large c may lead to fallacy
-    def update(self, episode, descent=False):
+    def update(self, episode, descent=False, verbose=True):
         sign = -1 if descent else 1
         episode_H = []
         for sars in episode:
@@ -155,10 +154,11 @@ class PolicyGradient:
             s, a, r, _ = sars
             c = c_return(self.env, episode, t)
             c_H = c_return(self.env, episode_H, t)
-            print("(%d,%d)" % (s,a))
-            print("c", c)
-            print("b", b)
-            print("c-b", c-b)
+            if (verbose):
+                print("(%d,%d)" % (s,a))
+                print("c", c)
+                print("b", b)
+                print("c-b", c-b)
             self.policy.weight = self.policy.weight + sign * self.alpha(t) * self.policy.log_gradient(s, a) * ((c - b) - self.lam * (c_H - b_H))
 
         self.report_Pi.append([self.policy(s) for s in MDP.STATE_SET])
@@ -169,6 +169,6 @@ class PolicyGradient:
             if verbose:
                 print("\rRL % d" % i, end="")
             episode = self.env.sample_trajectory(self.policy)
-            self.update(episode)
+            self.update(episode, verbose=verbose)
         if verbose:
             print("")

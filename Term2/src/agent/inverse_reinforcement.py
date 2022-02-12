@@ -1,8 +1,7 @@
 import numpy as np
-from environment import *
-from utility import *
-from function import *
-from reinforcement import *
+from ..environment import *
+from ..helper import *
+from .reinforcement import *
 
 
 # reward approximator (linear with some feature mapping)
