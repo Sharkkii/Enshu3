@@ -203,8 +203,3 @@ class RegularizedGeneticAlgorithm:
             self.report.append([[p.get(), f] for (p,f) in zip(self.population, self.fitness)])
         
         print("total epoch: %d" % (epoch+1))
-
-
-
-            
-            
